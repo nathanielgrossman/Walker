@@ -1,0 +1,26 @@
+{
+  "name": "walker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathanielgrossman/Walker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathanielgrossman/Walker/issues"
+  },
+  "homepage": "https://github.com/nathanielgrossman/Walker#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "request": "^2.87.0",
+    "twilio": "^3.17.4"
+  }
+}
