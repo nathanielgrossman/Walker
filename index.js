@@ -13,7 +13,7 @@ const testUser = {
 }
 
 const app = express();
-
+app.use(express.static('client'));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
