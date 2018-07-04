@@ -24,35 +24,42 @@ app.get('/test',
   twilioController.welcome
 );
 
+
 app.post('/sms',
-	twilioController.getMessageType
+  twilioController.getMessageType
 );
 
 app.post('/starttrip',
   twilioController.getUserFromIncoming,
-  twilioController.composeResponse,
+  twilioController.composeReply,
   twilioController.sendReply,
   timeController.arrivalTimer,
   twilioController.checkIn
 );
 
 app.post('/followup',
-	twilioController.getUserFromIncoming,
-	twilioController.followup,
-	timeController.followupTimer,
-	twilioController.finalCheckIn
+  twilioController.getUserFromIncoming,
+  twilioController.followup,
+  timeController.followupTimer,
+  twilioController.finalCheckIn
 );
 
-app.post('/endtrip', 
-	twilioController.getUserFromIncoming,
-	twilioController.confirmArrival,
-	twilioController.sendResponse
-)
+app.post('/endtrip',
+  twilioController.getUserFromIncoming,
+  twilioController.confirmArrival,
+  twilioController.sendResponse
+);
 
 app.post('/alert',
-	twilioController.getUserFromIncoming,
-	twilioController.alert
-)
+  twilioController.getUserFromIncoming,
+  twilioController.alert
+);
+
+app.post('/catch',
+  twilioController.getUserFromIncoming,
+  twilioController.catch,
+  twilioController.sendReply
+);
 
 var port = process.env.PORT || 3000;
 

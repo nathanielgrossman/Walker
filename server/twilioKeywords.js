@@ -1,25 +1,29 @@
 const twilioKeywords = {
+
   starters: [
     'omw',
-    'on my way!',
+    'onmyway!',
     'leaving'
   ],
 
   stops: [
     'here',
-    'made it',
+    'madeit',
     'home'
   ],
 
   affirmatives: [
   	'yes',
   	'yeah',
-  	'yep'
+  	'yep',
+  	'y'
   ],
 
   triggers: [
-  	'no'
+  	'no',
+  	'n'
   ]
+  
 }
 
 module.exports = twilioKeywords;

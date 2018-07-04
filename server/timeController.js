@@ -1,5 +1,6 @@
 const timeController = {};
 
+//initial timer to check if user arrives in their set duration
 timeController.arrivalTimer = (req, res, next) => {
   let start = Date.now();
   let end = start + res.locals.user.dur;
@@ -14,6 +15,7 @@ timeController.arrivalTimer = (req, res, next) => {
   }, 333)
 }
 
+//timer to check if user checks in before their followup duration expires
 timeController.followupTimer = (req, res, next) => {
   let start = Date.now();
   let end = start + res.locals.user.followup;
