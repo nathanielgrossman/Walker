@@ -1,5 +1,5 @@
-const accountSid = 'AC8265c3af624d3ceeefdfc6f02919a105'; // Your Account SID from www.twilio.com/console
-const authToken = '4eab0a2fc8bd2c399ae3b15197e678d4'; // Your Auth Token from www.twilio.com/console
+const accountSid = require('./../twilioKeys').accountSid;
+const authToken = require('./../twilioKeys').authToken;
 
 const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
@@ -25,8 +25,8 @@ twilioController.welcome = (req, res, next) => {
   const message = `Hello ${user.firstName}, nice to meet you! Text me "leaving", "omw", or "On my way!", and I'll keep an eye out for you till you get home.`
   client.messages.create({
       body: message,
-      to: user.phone, // Text this number
-      from: '+18057492557' // From a valid Twilio number
+      to: user.phone, 
+      from: '+18057492557' 
     })
     .then((message) => {
       console.log(message.sid);
