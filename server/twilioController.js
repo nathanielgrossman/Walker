@@ -8,10 +8,12 @@ const keywords = require('./twilioKeywords');
 
 const testUser = {
   _id: 1,
-  name: 'Nate',
+  firstName: 'Nate',
+  lastName: 'Grossman',
   phone: '+13109457549',
   emergency: '+13109457549',
-  dur: 30000,
+  dur: 10000,
+  followup: 10000,
   safe: null
 };
 
@@ -19,7 +21,7 @@ const twilioController = {};
 
 twilioController.welcome = (req, res, next) => {
   const user = testUser;
-  const message = `Hello ${user.name}, nice to meet you! Text me "leaving", "omw", or "On my way!", and I'll keep an eye out for you till you get home.`
+  const message = `Hello ${user.firstName}, nice to meet you! Text me "leaving", "omw", or "On my way!", and I'll keep an eye out for you till you get home.`
   client.messages.create({
       body: message,
       to: user.phone, // Text this number
@@ -44,8 +46,10 @@ twilioController.getMessageType = (req, res, next) => {
 	let text = req.body.Body.toLowerCase();
 	if (keywords.starters.includes(text)) {
 		res.redirect('/starttrip')
-	} else if (keywords.stops.includes(text)) {
-		res.redirect('endtrip')
+	} else if (keywords.stops.includes(text) || keywords.affirmatives.includes(text)) {
+		res.redirect('/endtrip')
+	} else if (keywords.triggers.includes(text)) {
+		res.redirect('/alert')
 	}
 	//check if message is 'omw', 'home', or 'help' and route accordingly
 }
@@ -66,21 +70,52 @@ twilioController.sendResponse = (req, res, next) => {
   next();
 }
 
-twilioController.checkIn = (req, res, next) => {
+twilioController.sendReply = (req, res, next) => {
+  const message = res.locals.message;
   const user = res.locals.user;
-  if (user.safe === false) {
-    const message = `Are you alright?`
-    client.messages.create({
+  client.messages.create({
         body: message,
-        to: user.phone, // Text this number
-        from: '+18057492557' // From a valid Twilio number
+        to: user.phone,
+        from: '+18057492557'
       })
       .then((message) => {
-        console.log(message.sid);
+        console.log('followup sent: ', message.sid);
         next();
       });
+}
+
+twilioController.checkIn = (req, res, next) => {
+	console.log('reached checkin. user is safe: ', res.locals.user.safe)
+  const user = res.locals.user;
+  if (user.safe === false) {
+    res.redirect('/followup')
   } else {
     next();
+  }
+}
+
+twilioController.followup = (req, res, next) => {
+	console.log('reached followup');
+	const user = res.locals.user;
+	const message = `Are you alright?`
+    client.messages.create({
+        body: message,
+        to: user.phone,
+        from: '+18057492557'
+      })
+      .then((message) => {
+        console.log('followup sent: ', message.sid);
+        next();
+      });
+}
+
+twilioController.finalCheckIn = (req, res, next) => {
+	console.log('reached finalCheckIn. user is safe: ', res.locals.user.safe)
+  const user = res.locals.user;
+  if (user.safe === false) {
+    res.redirect('/alert');
+  } else {
+		next();
   }
 }
 
@@ -89,6 +124,22 @@ twilioController.confirmArrival = (req, res, next) => {
 	user.safe = true;
 	res.locals.message = `Good!`;
 	next()
+}
+
+twilioController.alert = (req, res, next) => {
+	console.log('reached alert')
+	const user = res.locals.user;
+	const message = `You are recieving this message because you are the emergency contact for ${user.firstName} ${user.lastName}. They have not checked in and may need assistance. Please act accordingly.`;
+	client.messages.create({
+        body: message,
+        to: user.emergency,
+        from: '+18057492557'
+      })
+      .then((message) => {
+        console.log('alert sent: ', message.sid);
+        user.safe = null;
+        next();
+      });
 }
 
 

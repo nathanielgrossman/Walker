@@ -31,15 +31,27 @@ app.post('/sms',
 app.post('/starttrip',
   twilioController.getUserFromIncoming,
   twilioController.composeResponse,
-  twilioController.sendResponse,
-  timeController.basicTimer,
+  twilioController.sendReply,
+  timeController.arrivalTimer,
   twilioController.checkIn
+);
+
+app.post('/followup',
+	twilioController.getUserFromIncoming,
+	twilioController.followup,
+	timeController.followupTimer,
+	twilioController.finalCheckIn
 );
 
 app.post('/endtrip', 
 	twilioController.getUserFromIncoming,
 	twilioController.confirmArrival,
 	twilioController.sendResponse
+)
+
+app.post('/alert',
+	twilioController.getUserFromIncoming,
+	twilioController.alert
 )
 
 var port = process.env.PORT || 3000;

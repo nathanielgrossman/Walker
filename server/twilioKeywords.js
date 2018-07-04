@@ -9,6 +9,16 @@ const twilioKeywords = {
     'here',
     'made it',
     'home'
+  ],
+
+  affirmatives: [
+  	'yes',
+  	'yeah',
+  	'yep'
+  ],
+
+  triggers: [
+  	'no'
   ]
 }
 
