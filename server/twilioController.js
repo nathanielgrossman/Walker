@@ -1,35 +1,28 @@
-const accountSid = require('./../twilioKeys').accountSid;
-const authToken = require('./../twilioKeys').authToken;
+const accountSid = require('./../keys').accountSid;
+const authToken = require('./../keys').authToken;
+const twilioNum = require('./../keys').twilioNum;
 
 const twilio = require('twilio');
 const client = new twilio(accountSid, authToken);
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const keywords = require('./twilioKeywords');
+const db = require('./../db');
 
-const testUser = {
-  _id: 1,
-  firstName: 'Nate',
-  lastName: 'Grossman',
-  phone: '+13109457549',
-  emergency: '+13109457549',
-  dur: 10000,
-  followup: 10000,
-  safe: null
-};
 
 const twilioController = {};
 
 //send welcome message to new user
 twilioController.welcome = (req, res, next) => {
-  const user = testUser;
-  const message = `Hello ${user.firstName}, nice to meet you! Text me "leaving", "omw", or "On my way!", and I'll keep an eye out for you till you get home.`
+  const user = res.locals.user;
+  const message = `Hello ${user.firstname}, nice to meet you! Text me "leaving", "omw", or "On my way!", and I'll keep an eye out for you till you get home.`
   client.messages.create({
       body: message,
-      to: user.phone, 
-      from: '+18057492557' 
+      to: user.phone,
+      from: twilioNum
     })
     .then((message) => {
       console.log(message.sid);
+      res.end();
       next();
     });
 }
@@ -49,22 +42,19 @@ twilioController.getMessageType = (req, res, next) => {
   //check if message is 'omw', 'home', or 'help' and route accordingly
 }
 
-//get user data from DB using phone number from incoming message
-twilioController.getUserFromIncoming = (req, res, next) => {
-  let sender = req.body.From;
-  console.log(sender);
-  //insert logic here to get user from database using sender's number
-  res.locals.user = testUser;
-  //end db logic
-  next();
-}
-
 //compose reply to incoming message
 twilioController.composeReply = (req, res, next) => {
   const user = res.locals.user;
   res.locals.message = `Alright, see you soon!`
-  user.safe = false;
-  next();
+  const text = 'UPDATE users SET safe = $1 WHERE phone = $2'
+  const values = [false, user.phone];
+  db.query(text, values, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.locals.user.safe = false;
+    next();
+  })
 }
 
 //send reply to incoming message (doesn't end response)
@@ -74,7 +64,7 @@ twilioController.sendReply = (req, res, next) => {
   client.messages.create({
       body: message,
       to: user.phone,
-      from: '+18057492557'
+      from: twilioNum
     })
     .then((message) => {
       console.log('followup sent: ', message.sid);
@@ -101,7 +91,7 @@ twilioController.followup = (req, res, next) => {
   client.messages.create({
       body: message,
       to: user.phone,
-      from: '+18057492557'
+      from: twilioNum
     })
     .then((message) => {
       console.log('followup sent: ', message.sid);
@@ -123,7 +113,15 @@ twilioController.finalCheckIn = (req, res, next) => {
 //set user status to safe if they confirm they've arrived
 twilioController.confirmArrival = (req, res, next) => {
   const user = res.locals.user;
-  user.safe = true;
+  const text = 'UPDATE users SET safe = $1 WHERE phone = $2'
+  const values = [true, user.phone];
+  db.query(text, values, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    res.locals.user.safe = true;
+    next();
+  })
   res.locals.message = `Good!`;
   next()
 }
@@ -132,16 +130,23 @@ twilioController.confirmArrival = (req, res, next) => {
 twilioController.alert = (req, res, next) => {
   console.log('reached alert')
   const user = res.locals.user;
-  const message = `You are recieving this message because you are the emergency contact for ${user.firstName} ${user.lastName}. They have not checked in and may need assistance. Please act accordingly.`;
+  const message = `You are recieving this message because you are the emergency contact for ${user.firstname} ${user.lastname}. They have not checked in and may need assistance. Please act accordingly.`;
   client.messages.create({
       body: message,
       to: user.emergency,
-      from: '+18057492557'
+      from: twilioNum
     })
     .then((message) => {
       console.log('alert sent: ', message.sid);
-      user.safe = null;
-      next();
+      const text = 'UPDATE users SET safe = $1 WHERE phone = $2'
+      const values = [true, user.phone];
+      db.query(text, values, (err, result) => {
+        if (err) {
+          console.log(err);
+        }
+        res.locals.user.safe = true;
+        next();
+      })
     });
 }
 
@@ -158,7 +163,7 @@ twilioController.sendResponse = (req, res, next) => {
 //respond's to unrecognized message
 twilioController.catch = (req, res, next) => {
   const user = res.locals.user;
-  res.locals.message = `Sorry ${user.firstName}, didn't catch that.`
+  res.locals.message = `Sorry ${user.firstname}, didn't catch that.`
   next();
 }
 

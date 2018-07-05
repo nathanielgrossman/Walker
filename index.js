@@ -1,27 +1,27 @@
-var AWS = require('aws-sdk');
-
-
-AWS.config.region = process.env.REGION
-
 const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
 const http = require('http');
+const pg = require('pg');
+var AWS = require('aws-sdk');
 
 const twilioController = require('./server/twilioController');
 const timeController = require('./server/timeController');
+const dbController = require('./server/dbController');
+
+AWS.config.region = process.env.REGION
 
 
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser());
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/index.html');
 });
 
 app.get('/test',
-  twilioController.welcome
+	dbController.test
 );
 
 
@@ -29,34 +29,41 @@ app.post('/sms',
   twilioController.getMessageType
 );
 
+app.post('/createuser',
+  dbController.createUser,
+  twilioController.welcome
+);
+
 app.post('/starttrip',
-  twilioController.getUserFromIncoming,
+  dbController.getUserFromIncoming,
   twilioController.composeReply,
   twilioController.sendReply,
   timeController.arrivalTimer,
+  dbController.checkUserStatus,
   twilioController.checkIn
 );
 
 app.post('/followup',
-  twilioController.getUserFromIncoming,
+  dbController.getUserFromIncoming,
   twilioController.followup,
   timeController.followupTimer,
+  dbController.checkUserStatus,
   twilioController.finalCheckIn
 );
 
 app.post('/endtrip',
-  twilioController.getUserFromIncoming,
+  dbController.getUserFromIncoming,
   twilioController.confirmArrival,
   twilioController.sendResponse
 );
 
 app.post('/alert',
-  twilioController.getUserFromIncoming,
+  dbController.getUserFromIncoming,
   twilioController.alert
 );
 
 app.post('/catch',
-  twilioController.getUserFromIncoming,
+  dbController.getUserFromIncoming,
   twilioController.catch,
   twilioController.sendReply
 );
