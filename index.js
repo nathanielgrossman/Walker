@@ -15,9 +15,11 @@ AWS.config.region = process.env.REGION
 
 const app = express();
 app.use(bodyParser());
+app.use(express.static('client')
+)
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/client/index.html');
+  console.log('requesting root');
 });
 
 app.get('/test',

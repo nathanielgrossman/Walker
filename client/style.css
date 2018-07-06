@@ -1,0 +1,28 @@
+body {
+  color: white;
+  font-family: 'Roboto', sans-serif!important;
+  font-weight: 300!important;
+  background-color: #151A2B!important;
+}
+
+.header {
+  font-family: 'Inknut Antiqua', serif!important;
+  font-weight: 600;
+}
+
+input {
+  background-color: #33416B!important;
+}
+
+#main {
+  padding: 20px;
+  /*text-align: center;*/
+}
+
+select {
+	background-color: #151A2B!important;
+}
+
+
+/*font-family: 'Roboto', sans-serif;
+font-family: 'Inknut Antiqua', serif;*/

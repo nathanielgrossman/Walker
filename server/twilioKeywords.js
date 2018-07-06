@@ -3,7 +3,9 @@ const twilioKeywords = {
   starters: [
     'omw',
     'onmyway!',
-    'leaving'
+    'onmyway',
+    'leaving',
+    'cominghome'
   ],
 
   stops: [
@@ -23,7 +25,7 @@ const twilioKeywords = {
   	'no',
   	'n'
   ]
-  
+
 }
 
 module.exports = twilioKeywords;

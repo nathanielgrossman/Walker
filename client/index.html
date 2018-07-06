@@ -3,73 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <title>Walker</title>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  <link href="https://fonts.googleapis.com/css?family=Inknut+Antiqua:400,500,600,700,800|Roboto:300,400,500" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-  <h1>Walker</h1>
-  <form id="userinput">
-    First Name:
-    <br>
-    <input type="text" name="firstname">
-    <br> Last Name:
-    <br>
-    <input type="text" name="lastname">
-    <br> Phone Number:
-    <br> (
-    <input type="number" name="area" min="0" max="999" maxlength="3">)
-    <input type="number" name="prefix" min="0" max="999" maxlength="3">-
-    <input type="number" name="suffix" min="0" max="9999" maxlength="4">
-    <br> Emergency Contact Number:
-    <br> (
-    <input type="number" name="earea" min="0" max="999" maxlength="3">)
-    <input type="number" name="eprefix" min="0" max="999" maxlength="3">-
-    <input type="number" name="esuffix" min="0" max="9999" maxlength="4">
-    <br> Walk Duration:
-    <br>
-    <select name="dur">
-      <option value="10000">10s</option>
-      <option value="30000">30s</option>
-      <option value="60000">1m</option>
-      <option value="300000">5m</option>
-      <option value="600000">10m</option>
-    </select>
-    <br> Follow Up Duration
-    <br>
-    <select name="followup">
-      <option value="10000">10s</option>
-      <option value="30000">30s</option>
-      <option value="60000">1m</option>
-      <option value="300000">5m</option>
-      <option value="600000">10m</option>
-    </select>
-    <br>
-    <br>
-    <input type="submit" name="submit">
-  </form>
+  <div id="main" class="container-fluid">
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10">
+        <p class="h1 text-light header">Walker</p>
+        
+        <form id="userinput" class="text-light">
+          First Name:
+          <br>
+          <input type="text" name="firstname" class="text-light form-control">
+          <br> Last Name:
+          <br>
+          <input type="text" name="lastname" class="text-light form-control">
+          <br>
+          Phone Number:
+          <br> (
+          <input type="number" name="area" min="0" max="999" maxlength="3" class="text-light">)
+          <input type="number" name="prefix" min="0" max="999" maxlength="3" class="text-light">-
+          <input type="number" name="suffix" min="0" max="9999" maxlength="4" class="text-light">
+          <br> Emergency Contact Number:
+          <br> (
+          <input type="number" name="earea" min="0" max="999" maxlength="3" class="text-light">)
+          <input type="number" name="eprefix" min="0" max="999" maxlength="3" class="text-light">-
+          <input type="number" name="esuffix" min="0" max="9999" maxlength="4" class="text-light">
+          <br>
+          <br> Walk Duration:
+          <br>
+          <select name="dur" class="text-light form-control">
+            <option value="10000">10s</option>
+            <option value="30000">30s</option>
+            <option value="60000">1m</option>
+            <option value="300000">5m</option>
+            <option value="600000">10m</option>
+          </select>
+          <br> Follow Up Duration
+          <br>
+          <select name="followup" class="text-light form-control">
+            <option value="10000">10s</option>
+            <option value="30000">30s</option>
+            <option value="60000">1m</option>
+            <option value="300000">5m</option>
+            <option value="600000">10m</option>
+          </select>
+          <br>
+          <input type="submit" name="submit" class="btn btn-lg btn-block text-light">
+        </form>
+      </div>
+      <div class="col-1"></div>
+    </div>
+  </div>
   <div id="root"></div>
+  <script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 </body>
-<script>
-const formToJSON = elements => [].reduce.call(elements, (data, element) => {
-  data[element.name] = element.value;
-  return data;
-}, {});
-
-const handleFormSubmit = event => {
-  event.preventDefault();
-  const data = formToJSON(form.elements);
-  console.log(data);
-  fetch('/createuser', {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json, */*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then(console.log('done'));
-};
-
-const form = document.getElementById('userinput');
-form.addEventListener('submit', handleFormSubmit);
-</script>
 
 </html>
